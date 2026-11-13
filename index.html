@@ -990,7 +990,6 @@
     @media (max-width: 900px) {
       :root { --gutter: var(--gutter-mobile); }
       nav { padding: var(--space-sm) var(--gutter-mobile); }
-      .nav-links { display: none; }
       section { padding: var(--space-xl) var(--gutter-mobile); }
       .hero-logo-main { height: clamp(60px, 25vw, 120px); }
       .about { grid-template-columns: 1fr; gap: var(--space-lg); }
@@ -1028,6 +1027,64 @@
     }
 
     /* ========================================
+       HAMBURGER MENU
+       ======================================== */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+      z-index: 201;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 900px) {
+      .hamburger { display: flex; }
+
+      .nav-links {
+        display: flex !important;
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-lg);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+
+      .nav-links.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .nav-links a {
+        font-size: var(--text-xl);
+        height: auto;
+        overflow: visible;
+      }
+
+      .nav-links a .nav-text-clone { display: none; }
+    }
+
+    /* ========================================
        REVEAL ANIMATIONS BASE
        ======================================== */
     .reveal {
@@ -1055,6 +1112,9 @@
         <li><a href="#services"><span class="nav-text">Services</span><span class="nav-text-clone">Services</span></a></li>
         <li><a href="#contact"><span class="nav-text">Contact</span><span class="nav-text-clone">Contact</span></a></li>
       </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
@@ -1353,6 +1413,20 @@
     toggle.addEventListener('click', () => {
       const current = root.getAttribute('data-theme');
       setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    /* HAMBURGER MENU */
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
     });
 
     /* ========================================
